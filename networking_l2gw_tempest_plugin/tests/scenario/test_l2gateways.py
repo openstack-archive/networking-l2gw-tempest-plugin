@@ -26,9 +26,9 @@ from tempest.lib.common.utils import data_utils
 from tempest.lib.common.utils import test_utils
 from tempest.lib import exceptions as lib_exc
 
-from networking_l2gw.tests.api import base_l2gw
-from networking_l2gw.tests.scenario import ovsdb_connections
-from networking_l2gw.tests.tempest import config
+from networking_l2gw_tempest_plugin.tests.api import base_l2gw
+from networking_l2gw_tempest_plugin.tests.scenario import ovsdb_connections
+from networking_l2gw_tempest_plugin.tests.tempest import config
 
 CONF = config.CONF
 LOG = log.getLogger(__name__)

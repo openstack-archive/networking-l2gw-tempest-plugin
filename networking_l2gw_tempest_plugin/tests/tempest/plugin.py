@@ -15,17 +15,17 @@
 
 import os
 
-import networking_l2gw
+import networking_l2gw_tempest_plugin
 from tempest.test_discover import plugins
 
-from networking_l2gw.tests.tempest import config as l2gw_config
+from networking_l2gw_tempest_plugin.tests.tempest import config as l2gw_config
 
 
 class NeutronL2gwTempestPlugin(plugins.TempestPlugin):
     def load_tests(self):
         base_path = os.path.split(os.path.dirname(
-            os.path.abspath(networking_l2gw.__file__)))[0]
-        test_dir = "networking_l2gw/tests/api"
+            os.path.abspath(networking_l2gw_tempest_plugin.__file__)))[0]
+        test_dir = "networking_l2gw_tempest_plugin/tests/api"
         full_test_dir = os.path.join(base_path, test_dir)
         return full_test_dir, base_path
 

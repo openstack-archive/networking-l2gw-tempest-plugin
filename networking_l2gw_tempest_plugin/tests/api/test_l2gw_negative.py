@@ -23,7 +23,7 @@ from tempest.lib import decorators
 from tempest.lib import exceptions as lib_exc
 from tempest import test
 
-from networking_l2gw.tests.api import base_l2gw
+from networking_l2gw_tempest_plugin.tests.api import base_l2gw
 
 CONF = config.CONF
 
