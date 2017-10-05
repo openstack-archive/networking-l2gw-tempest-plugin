@@ -15,7 +15,7 @@
 
 import random
 
-from neutron.tests.tempest.api import base
+from neutron_tempest_plugin.api import base
 from tempest import config
 from tempest.lib.common.utils import data_utils
 from tempest.lib import decorators

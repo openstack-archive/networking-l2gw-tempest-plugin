@@ -18,8 +18,8 @@ import json
 import time
 
 from neutron.tests.api import base
-from neutron.tests.tempest import exceptions
-from neutron.tests.tempest import manager
+from neutron_tempest_plugin import exceptions
+from neutron_tempest_plugin import manager
 from oslo_log import log
 from tempest.lib.common import rest_client
 from tempest.lib.common.utils import data_utils
