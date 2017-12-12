@@ -18,7 +18,7 @@ import os
 import networking_l2gw_tempest_plugin
 from tempest.test_discover import plugins
 
-from networking_l2gw_tempest_plugin.tests.tempest import config as l2gw_config
+from networking_l2gw_tempest_plugin import config as l2gw_config
 
 
 class NeutronL2gwTempestPlugin(plugins.TempestPlugin):
