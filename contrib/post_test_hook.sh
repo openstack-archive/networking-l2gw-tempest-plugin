@@ -6,8 +6,6 @@ NETWORKING_L2GW_DIR="$BASE/new/networking-l2gw"
 TEMPEST_DIR="$BASE/new/tempest"
 SCRIPTS_DIR="/usr/os-testr-env/bin/"
 
-venv=${1:-"fullstack"}
-
 function generate_test_logs {
     local path="$1"
     # Compress all $path/*.txt files and move the directories holding those
@@ -30,10 +28,6 @@ function generate_testr_results {
         gzip -9 ./testrepository.subunit
         gzip -9 ./testr_results.html
         sudo mv ./*.gz /opt/stack/logs/
-    fi
-
-    if [[ "$venv" == fullstack* ]] ; then
-        generate_test_logs "/tmp/${venv}-logs"
     fi
 }
 
