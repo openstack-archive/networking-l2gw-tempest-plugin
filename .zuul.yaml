@@ -2,9 +2,11 @@
     name: openstack/networking-l2gw-tempest-plugin
     check:
       jobs:
+        - build-openstack-sphinx-docs
         - networking-l2gw-tempest-dummy
     gate:
       jobs:
+        - build-openstack-sphinx-docs
         - networking-l2gw-tempest-dummy
 
 - job:
