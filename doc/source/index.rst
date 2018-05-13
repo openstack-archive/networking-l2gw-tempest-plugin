@@ -25,7 +25,7 @@ Source
 * `Blueprints`_ - feature specifications
 * :doc:`releasenotes`
 
-.. _PyPi: https://pypi.python.org/pypi/networking-l2gw-tempest-plugin
+.. _PyPi: https://pypi.org/project/networking-l2gw-tempest-plugin
 .. _Launchpad project: https://launchpad.net/networking-l2gw-tempest-plugin
 .. _Blueprints: https://blueprints.launchpad.net/networking-l2gw-tempest-plugin
 
