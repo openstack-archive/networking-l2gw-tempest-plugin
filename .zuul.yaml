@@ -24,7 +24,7 @@
         NETWORKING_L2GW_SERVICE_DRIVER: L2GW:l2gw:networking_l2gw.services.l2gateway.service_drivers.L2gwDriver:default
         TEMPEST_PLUGINS: '"/opt/stack/neutron-tempest-plugin /opt/stack/networking-l2gw-tempest-plugin"'
       devstack_plugins:
-        networking-l2gw: git://git.openstack.org/openstack/networking-l2gw
+        networking-l2gw: https://git.openstack.org/openstack/networking-l2gw
       devstack_services:
         l2gw-plugin: true
     irrelevant-files:
