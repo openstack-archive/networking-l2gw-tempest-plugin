@@ -1,11 +1,11 @@
 - project:
+    templates:
+      - build-openstack-docs-pti
     check:
       jobs:
-        - build-openstack-sphinx-docs
         - networking-l2gw-tempest-dummy
     gate:
       jobs:
-        - build-openstack-sphinx-docs
         - networking-l2gw-tempest-dummy
 
 - job:

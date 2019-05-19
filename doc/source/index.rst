@@ -15,6 +15,9 @@ User guide
    :maxdepth: 1
 
    tempest-plugin
+   readme
+   contributing
+   releasenotes
 
 Source
 ------

@@ -23,7 +23,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 extensions = [
     'sphinx.ext.autodoc',
     #'sphinx.ext.intersphinx',
-    'oslosphinx'
+    'reno.sphinxext',
+    'openstackdocstheme'
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
@@ -39,6 +40,12 @@ master_doc = 'index'
 # General information about the project.
 project = u'networking-l2gw'
 copyright = u'2013, OpenStack Foundation'
+
+# openstackdocstheme options
+repository_name = 'openstack/networking-l2gw-tempest-plugin'
+bug_project = 'networking-l2gw-tempest-plugin'
+bug_tag = ''
+html_theme = 'openstackdocs'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
