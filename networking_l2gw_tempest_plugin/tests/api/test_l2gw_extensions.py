@@ -177,8 +177,8 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
         l2_gw_id = l2_gateway['id']
         self.addCleanup(self.admin_client.delete_l2_gateway, l2_gw_id)
         # Check the created multi-device L2Gateway
-        device_list = range(3)
-        interface_list = range(3)
+        device_list = list(range(3))
+        interface_list = list(range(3))
         show_body = self.admin_client.show_l2_gateway(l2_gw_id)
         self.assertEqual(gw_name, show_body['l2_gateway']['name'])
         self.assertEqual(l2_gateway['id'], show_body['l2_gateway']['id'])
@@ -191,8 +191,8 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
             self.assertIn(device_name_list[j], device_list)
             self.assertIn(interface_name_list[j], interface_list)
         # Update the gateway device name
-        device_list_updated = range(3)
-        interface_list_updated = range(3)
+        device_list_updated = list(range(3))
+        interface_list_updated = list(range(3))
         device_updated = [{"device_name": device_name_list[0], "interfaces":[{
             "name": "intNameNew"}]}]
         interface_name_list = [
