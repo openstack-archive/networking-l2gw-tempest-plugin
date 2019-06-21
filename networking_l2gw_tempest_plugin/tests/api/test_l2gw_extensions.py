@@ -15,8 +15,6 @@
 
 import random
 
-from neutron_tempest_plugin.api import base
-from tempest.common import utils
 from tempest import config
 from tempest.lib.common.utils import data_utils
 from tempest.lib import decorators
@@ -26,7 +24,7 @@ from networking_l2gw_tempest_plugin.tests.api import base_l2gw
 CONF = config.CONF
 
 
-class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
+class L2GatewayExtensionTestJSON(base_l2gw.BaseAdminL2GatewayTest):
     _interface = 'json'
 
     """
@@ -43,28 +41,18 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
         Delete l2gatewayconnection
     """
 
-    @classmethod
-    def resource_setup(cls):
-        super(L2GatewayExtensionTestJSON, cls).resource_setup()
-        # At least one switch detail should be provided to run the tests
-        if (len(CONF.l2gw.l2gw_switch) <= 0):
-            msg = ('At least one switch detail must be defined.')
-            raise cls.skipException(msg)
-        if not utils.is_extension_enabled('l2-gateway', 'network'):
-            msg = "L2Gateway Extension not enabled."
-            raise cls.skipException(msg)
-
     @decorators.idempotent_id('3ca07946-a3c9-49ac-b058-8be54abecf1f')
     def test_create_show_list_update_delete_l2gateway(self):
         # Create an L2Gateway
         gw_name = data_utils.rand_name('l2gw')
         devices = base_l2gw.get_l2gw_body(CONF.l2gw.l2gw_switch)["devices"]
-        body = self.admin_client.create_l2_gateway(
+        body = self.admin_l2gws_client.create_l2_gateway(
             name=gw_name, devices=devices)
         l2_gateway = body['l2_gateway']
-        self.addCleanup(self.admin_client.delete_l2_gateway, l2_gateway['id'])
+        self.addCleanup(self.admin_l2gws_client.delete_l2_gateway,
+                        l2_gateway['id'])
         # Show details of L2Gateway
-        show_body = self.admin_client.show_l2_gateway(l2_gateway['id'])
+        show_body = self.admin_l2gws_client.show_l2_gateway(l2_gateway['id'])
         self.assertEqual(gw_name, show_body['l2_gateway']['name'])
         conf_devices = base_l2gw.form_dict_devices(devices)
         create_devices = base_l2gw.form_dict_devices(show_body['l2_gateway']
@@ -73,42 +61,45 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
         for k, v in zip(conf_devices.items(), create_devices.items()):
             self.assertEqual(k, v)
         # List L2Gateways
-        self.admin_client.list_l2_gateways()
+        self.admin_l2gws_client.list_l2_gateways()
         # Update the name of an L2Gateway and verify the same
         updated_name = 'updated ' + gw_name
-        update_body = self.admin_client.update_l2_gateway(l2_gateway['id'],
-                                                          name=updated_name)
+        update_body = self.admin_l2gws_client.update_l2_gateway(
+            l2_gateway['id'], name=updated_name)
         self.assertEqual(update_body['l2_gateway']['name'], updated_name)
-        show_body = self.admin_client.show_l2_gateway(l2_gateway['id'])
+        show_body = self.admin_l2gws_client.show_l2_gateway(l2_gateway['id'])
         self.assertEqual(show_body['l2_gateway']['name'], updated_name)
 
     @decorators.idempotent_id('3ad5e945-2b42-4ea8-9c03-0bf41d4167f2')
     def test_create_show_list_delete_l2gateway_connection(self):
         # Create a network
         name = data_utils.rand_name('network')
-        net_body = self.admin_client.create_network(name=name)
+        net_body = self.admin_networks_client.create_network(name=name)
         net_id = net_body['network']['id']
-        self.addCleanup(self.admin_client.delete_network, net_id)
+        self.addCleanup(self.admin_networks_client.delete_network, net_id)
         # Create an L2Gateway
         gw_name = data_utils.rand_name('l2gw')
         devices = base_l2gw.get_l2gw_body(CONF.l2gw.l2gw_switch)["devices"]
-        l2_gw_body = self.admin_client.create_l2_gateway(
+        l2_gw_body = self.admin_l2gws_client.create_l2_gateway(
             name=gw_name, devices=devices)
         l2_gw_id = l2_gw_body['l2_gateway']['id']
-        self.addCleanup(self.admin_client.delete_l2_gateway, l2_gw_id)
+        self.addCleanup(self.admin_l2gws_client.delete_l2_gateway, l2_gw_id)
         # Create an L2Gateway Connection
-        l2_gw_conn_body = self.admin_client.create_l2_gateway_connection(
-            l2_gateway_id=l2_gw_id, network_id=net_id)
+        l2_gw_conn_body = \
+            self.admin_l2gw_conns_client.create_l2_gateway_connection(
+                l2_gateway_id=l2_gw_id, network_id=net_id)
         l2_gw_conn_id = l2_gw_conn_body['l2_gateway_connection']['id']
-        self.addCleanup(self.admin_client.delete_l2_gateway_connection,
-                        l2_gw_conn_id)
+        self.addCleanup(
+            self.admin_l2gw_conns_client.delete_l2_gateway_connection,
+            l2_gw_conn_id)
         # Show details of created L2 Gateway connection
-        show_body = self.admin_client.show_l2_gateway_connection(l2_gw_conn_id)
+        show_body = self.admin_l2gw_conns_client.show_l2_gateway_connection(
+            l2_gw_conn_id)
         l2_gw_conn = show_body['l2_gateway_connection']
         self.assertEqual(net_id, l2_gw_conn['network_id'])
         self.assertEqual(l2_gw_id, l2_gw_conn['l2_gateway_id'])
         # List L2Gateway Connections
-        self.admin_client.list_l2_gateway_connections()
+        self.admin_l2gw_conns_client.list_l2_gateway_connections()
 
     def test_create_l2gw_conn_with_segid_when_l2gw_created_without_segid(self):
         # Create an L2Gateway
@@ -117,27 +108,29 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
         if devices[0]['interfaces'][0]['segmentation_id']:
             seg_id = devices[0]['interfaces'][0]['segmentation_id'][0]
             devices[0]['interfaces'][0].pop('segmentation_id')
-        body = self.admin_client.create_l2_gateway(
+        body = self.admin_l2gws_client.create_l2_gateway(
             name=gw_name, devices=devices)
         l2_gateway = body['l2_gateway']
         l2_gw_id = l2_gateway['id']
-        self.addCleanup(self.admin_client.delete_l2_gateway, l2_gw_id)
+        self.addCleanup(self.admin_l2gws_client.delete_l2_gateway, l2_gw_id)
         # Create a network
         name = data_utils.rand_name('network')
-        net_body = self.admin_client.create_network(name=name)
+        net_body = self.admin_networks_client.create_network(name=name)
         net_id = net_body['network']['id']
-        self.addCleanup(self.admin_client.delete_network, net_id)
+        self.addCleanup(self.admin_networks_client.delete_network, net_id)
         # Create an L2Gateway Connection
-        l2_gw_conn_body = self.admin_client.create_l2_gateway_connection(
-            l2_gateway_id=l2_gw_id, network_id=net_id,
-            segmentation_id=seg_id)
+        l2_gw_conn_body = \
+            self.admin_l2gw_conns_client.create_l2_gateway_connection(
+                l2_gateway_id=l2_gw_id, network_id=net_id,
+                segmentation_id=seg_id)
         l2_gw_conn_id = l2_gw_conn_body['l2_gateway_connection']['id']
         l2_gw_seg_id = l2_gw_conn_body['l2_gateway_connection'][
             'segmentation_id']
-        self.addCleanup(self.admin_client.delete_l2_gateway_connection,
-                        l2_gw_conn_id)
+        self.addCleanup(
+            self.admin_l2gw_conns_client.delete_l2_gateway_connection,
+            l2_gw_conn_id)
         # Show details of created L2 Gateway connection
-        show_body = self.admin_client.show_l2_gateway_connection(
+        show_body = self.admin_l2gw_conns_client.show_l2_gateway_connection(
             l2_gw_conn_id)
         l2_gw_conn = show_body['l2_gateway_connection']
         self.assertEqual(net_id, l2_gw_conn['network_id'])
@@ -171,15 +164,15 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
                 "name": interface_name_list[2]}],
             "segmentation_id": str(seg_id[2])}]
         # Create the multi-device L2gateway
-        body = self.admin_client.create_l2_gateway(
+        body = self.admin_l2gws_client.create_l2_gateway(
             name=gw_name, devices=devices_list)
         l2_gateway = body['l2_gateway']
         l2_gw_id = l2_gateway['id']
-        self.addCleanup(self.admin_client.delete_l2_gateway, l2_gw_id)
+        self.addCleanup(self.admin_l2gws_client.delete_l2_gateway, l2_gw_id)
         # Check the created multi-device L2Gateway
         device_list = list(range(3))
         interface_list = list(range(3))
-        show_body = self.admin_client.show_l2_gateway(l2_gw_id)
+        show_body = self.admin_l2gws_client.show_l2_gateway(l2_gw_id)
         self.assertEqual(gw_name, show_body['l2_gateway']['name'])
         self.assertEqual(l2_gateway['id'], show_body['l2_gateway']['id'])
         for i in range(3):
@@ -197,9 +190,9 @@ class L2GatewayExtensionTestJSON(base.BaseAdminNetworkTest):
             "name": "intNameNew"}]}]
         interface_name_list = [
             interface_name_list[2], interface_name_list[1], "intNameNew"]
-        body = self.admin_client.update_l2_gateway(
+        body = self.admin_l2gws_client.update_l2_gateway(
             l2_gateway['id'], devices=device_updated)
-        show_body_updated = self.admin_client.show_l2_gateway(
+        show_body_updated = self.admin_l2gws_client.show_l2_gateway(
             l2_gateway['id'])
         # Check updating of multi-device L2gateway
         self.assertEqual(gw_name, show_body_updated['l2_gateway']['name'])

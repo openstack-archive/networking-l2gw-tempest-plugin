@@ -13,6 +13,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from tempest.api.network import base
+from tempest.common import utils
+from tempest import config
+
+from networking_l2gw_tempest_plugin.tests.api import clients
+
+CONF = config.CONF
+
 SEGMENTATION_ID_DELIMITER = "#"
 INTERFACE_SEG_ID_DELIMITER = "|"
 DEVICE_INTERFACE_DELIMITER = "::"
@@ -86,3 +94,51 @@ def form_dict_devices(devices):
             devices1.setdefault(device_name, []).append(int_seg)
             int_seg = []
     return devices1
+
+
+class BaseL2GatewayTest(base.BaseNetworkTest):
+    force_tenant_isolation = False
+    credentials = ['primary']
+
+    @classmethod
+    def setup_clients(cls):
+        super(BaseL2GatewayTest, cls).setup_clients()
+        cls.l2gws_client = cls.os.l2gw_client
+        cls.l2gw_conns_client = cls.os.l2gw_connection_client
+
+    @classmethod
+    def resource_setup(cls):
+        super(BaseL2GatewayTest, cls).resource_setup()
+        # At least one switch detail should be provided to run the tests
+        if (len(CONF.l2gw.l2gw_switch) <= 0):
+            msg = ('At least one switch detail must be defined.')
+            raise cls.skipException(msg)
+        if not utils.is_extension_enabled('l2-gateway', 'network'):
+            msg = "L2Gateway Extension not enabled."
+            raise cls.skipException(msg)
+
+    @classmethod
+    def get_client_manager(cls, credential_type=None, roles=None,
+                           force_new=None):
+        manager = super(BaseL2GatewayTest, cls).get_client_manager(
+            credential_type=credential_type,
+            roles=roles,
+            force_new=force_new
+        )
+        # Neutron uses a different clients manager than the one in the Tempest
+        # save the original in case mixed tests need it
+        if credential_type == 'primary':
+            cls.os_tempest = manager
+        return clients.Manager(manager.credentials)
+
+
+class BaseAdminL2GatewayTest(BaseL2GatewayTest):
+
+    credentials = ['primary', 'admin']
+
+    @classmethod
+    def setup_clients(cls):
+        super(BaseAdminL2GatewayTest, cls).setup_clients()
+        cls.admin_networks_client = cls.os_admin.networks_client
+        cls.admin_l2gws_client = cls.os_admin.l2gw_client
+        cls.admin_l2gw_conns_client = cls.os_admin.l2gw_connection_client

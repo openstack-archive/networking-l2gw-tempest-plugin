@@ -21,6 +21,7 @@ from neutron.tests.api import base
 from neutron_tempest_plugin import exceptions
 from neutron_tempest_plugin import manager
 from oslo_log import log
+from tempest import config
 from tempest.lib.common import rest_client
 from tempest.lib.common.utils import data_utils
 from tempest.lib.common.utils import test_utils
@@ -28,7 +29,6 @@ from tempest.lib import exceptions as lib_exc
 
 from networking_l2gw_tempest_plugin.tests.api import base_l2gw
 from networking_l2gw_tempest_plugin.tests.scenario import ovsdb_connections
-from networking_l2gw_tempest_plugin.tests.tempest import config
 
 CONF = config.CONF
 LOG = log.getLogger(__name__)
