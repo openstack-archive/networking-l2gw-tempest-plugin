@@ -1,7 +1,6 @@
-=================================
- Tempest Plugin for Neutron L2GW
-=================================
+This project is moved to x/networking-l2gw-tempest-plugin.
 
-This project defines a tempest plugin containing tests used to verify the
-functionality of the Neutron L2GW service plugin. The plugin will automatically
-load these tests into tempest.
+For any further questions, please email
+openstack-discuss@lists.openstack.org or join #openstack-dev on
+Freenode.
+
